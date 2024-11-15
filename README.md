@@ -97,14 +97,14 @@ Rename-Computer -NewName "DC-01" -Restart
 ```powershell
 Install-WindowsFeature AD-Domain-Services -IncludeAllSubFeature -IncludeManagementTools
 Import-Module ADDSDeployment
-Install-ADDSForest -DomainName "form-it.lab" -DomainNetbiosName "FORM-IT" -ForestMode WinThreshold -DomainMode WinThreshold -InstallDNS
+Install-ADDSForest -DomainName "form-it.loc" -DomainNetbiosName "FORM-IT" -ForestMode WinThreshold -DomainMode WinThreshold -InstallDNS
 ```
 
 ### Faire le DHCP et les scope
 
 ```powershell
 Install-WindowsFeature DHCP -IncludeAllSubFeature -IncludeManagementTools
-Add-DhcpServerInDC -DnsName "DC-01.form-it.lab" -IpAddress 10.144.0.1
+Add-DhcpServerInDC -DnsName "DC-01.form-it.loc" -IpAddress 10.144.0.1
 Add-DhcpServerv4Scope -Name "Scope1" -Description "10.144.0.1/24" -StartRange 10.144.0.1 -EndRange 10.144.0.254 -SubnetMask 255.255.255.0 -State Active
 Add-DhcpServerv4ExclusionRange -ScopeId 10.144.0.0 -StartRange 10.144.0.1 -EndRange 10.144.0.30
 Add-DhcpServerv4ExclusionRange -ScopeId 10.144.0.0 -StartRange 10.144.0.200 -EndRange 10.144.0.254
@@ -115,7 +115,7 @@ Set-DhcpServerv4OptionValue -ScopeId 10.144.0.0 -Router 10.144.0.254 -DnsServer 
 
 ```powershell
 Add-DnsServerPrimaryZone -Name "0.144.10.in-addr.arpa" -ReplicationScope "Domain"
-Add-DnsServerResourceRecordPtr -Name "1" -PtrDomainName "DC-01.form-it.lab" -ZoneName "0.144.10.in-addr.arpa"
+Add-DnsServerResourceRecordPtr -Name "1" -PtrDomainName "DC-01.form-it.loc" -ZoneName "0.144.10.in-addr.arpa"
 ```
 
 ### OU, Groupes, Users active directory
@@ -129,18 +129,18 @@ New-ADOrganizationalUnit -Name "Marketing"
 New-ADOrganizationalUnit -Name "Vente"
 
 # Group
-New-ADGroup -Name "Directeur" -GroupScope Global -GroupCategory Security -Path "OU=Direction,DC=form-it,DC=lab"
-New-ADGroup -Name "Negociation" -GroupScope Global -GroupCategory Security -Path "OU=Commerciaux,DC=form-it,DC=lab"
-New-ADGroup -Name "Formation" -GroupScope Global -GroupCategory Security -Path "OU=RH,DC=form-it,DC=lab"
-New-ADGroup -Name "Communication" -GroupScope Global -GroupCategory Security -Path "OU=Marketing,DC=form-it,DC=lab"
-New-ADGroup -Name "Vendeur" -GroupScope Global -GroupCategory Security -Path "OU=Vente,DC=form-it,DC=lab"
+New-ADGroup -Name "Directeur" -GroupScope Global -GroupCategory Security -Path "OU=Direction,DC=form-it,DC=loc"
+New-ADGroup -Name "Negociation" -GroupScope Global -GroupCategory Security -Path "OU=Commerciaux,DC=form-it,DC=loc"
+New-ADGroup -Name "Formation" -GroupScope Global -GroupCategory Security -Path "OU=RH,DC=form-it,DC=loc"
+New-ADGroup -Name "Communication" -GroupScope Global -GroupCategory Security -Path "OU=Marketing,DC=form-it,DC=loc"
+New-ADGroup -Name "Vendeur" -GroupScope Global -GroupCategory Security -Path "OU=Vente,DC=form-it,DC=loc"
 
 # User
-New-ADUser -Name "Arnold" -SamAccountName "Arnold" -Path "OU=Direction,DC=form-it,DC=lab" -AccountPassword (ConvertTo-SecureString "Azerty123" -AsPlainText -Force) -Enabled $true
-New-ADUser -Name "Marwa" -SamAccountName "Marwa" -Path "OU=Commerciaux,DC=form-it,DC=lab" -AccountPassword (ConvertTo-SecureString "Azerty123" -AsPlainText -Force) -Enabled $true
-New-ADUser -Name "Manel" -SamAccountName "Manel" -Path "OU=RH,DC=form-it,DC=lab" -AccountPassword (ConvertTo-SecureString "Azerty123" -AsPlainText -Force) -Enabled $true
-New-ADUser -Name "Faical" -SamAccountName "Faical" -Path "OU=Marketing,DC=form-it,DC=lab" -AccountPassword (ConvertTo-SecureString "Azerty123" -AsPlainText -Force) -Enabled $true
-New-ADUser -Name "Eliott" -SamAccountName "Eliott" -Path "OU=Vente,DC=form-it,DC=lab" -AccountPassword (ConvertTo-SecureString "Azerty123" -AsPlainText -Force) -Enabled $true
+New-ADUser -Name "Arnold" -SamAccountName "Arnold" -Path "OU=Direction,DC=form-it,DC=loc" -AccountPassword (ConvertTo-SecureString "P@ssword" -AsPlainText -Force) -Enabled $true
+New-ADUser -Name "Marwa" -SamAccountName "Marwa" -Path "OU=Commerciaux,DC=form-it,DC=loc" -AccountPassword (ConvertTo-SecureString "P@ssword" -AsPlainText -Force) -Enabled $true
+New-ADUser -Name "Manel" -SamAccountName "Manel" -Path "OU=RH,DC=form-it,DC=loc" -AccountPassword (ConvertTo-SecureString "P@ssword" -AsPlainText -Force) -Enabled $true
+New-ADUser -Name "Faical" -SamAccountName "Faical" -Path "OU=Marketing,DC=form-it,DC=loc" -AccountPassword (ConvertTo-SecureString "P@ssword" -AsPlainText -Force) -Enabled $true
+New-ADUser -Name "Eliott" -SamAccountName "Eliott" -Path "OU=Vente,DC=form-it,DC=loc" -AccountPassword (ConvertTo-SecureString "P@ssword" -AsPlainText -Force) -Enabled $true
 
 # User -> Group
 Add-ADGroupMember -Identity "Directeur" -Members "Arnold"
@@ -165,14 +165,14 @@ Rename-Computer -NewName "DC-02" -Restart
 ### Joindre le domaine
 
 ```powershell
-Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+Add-Computer -DomainName "form-it.loc" -Credential "FORM-IT\Administrateur" -Restart
 ```
 
 ### Installation de ADDS
 
 ```powershell
-Install-ADDSDomainController -DomainName "form-it.lab"
-Add-DhcpServerv4Failover -ComputerName "DC-01" -PartnerServer "DC-02" -Name "Failover-Partner" -LoadBalancePercent 50 -SharedSecret "Azerty123"  -ScopeId 10.144.0.0
+Install-ADDSDomainController -DomainName "form-it.loc"
+Add-DhcpServerv4Failover -ComputerName "DC-01" -PartnerServer "DC-02" -Name "Failover-Partner" -LoadBalancePercent 50 -SharedSecret "P@ssword"  -ScopeId 10.144.0.0
 ```
 
 ## => VM Hote-01
@@ -186,7 +186,7 @@ Rename-Computer -NewName "Hote-01" -Restart
 ```
 
 ```powershell
-Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+Add-Computer -DomainName "form-it.loc" -Credential "FORM-IT\Administrateur" -Restart
 ```
 
 ## => VM Hote-02
@@ -200,7 +200,7 @@ Rename-Computer -NewName "Hote-02" -Restart
 ```
 
 ```powershell
-Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+Add-Computer -DomainName "form-it.loc" -Credential "FORM-IT\Administrateur" -Restart
 ```
 
 ## => VM Hote-03
@@ -214,7 +214,7 @@ Rename-Computer -NewName "Hote-03" -Restart
 ```
 
 ```powershell
-Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+Add-Computer -DomainName "form-it.loc" -Credential "FORM-IT\Administrateur" -Restart
 ```
 
 ## => PC Physique
@@ -260,13 +260,13 @@ Install-WindowsFeature iSCSITarget-VSS-VDS, FS-iSCSITarget-Server -IncludeAllSub
 ```powershell
 Get-PhysicalDisk
 Get-StorageSubSystem
-New-StoragePool -FriendlyName "PoolMiroirTriple" -StorageSubsystemFriendlyName *Hote-03* -PhysicalDisks (Get-PhysicalDisk | Where-Object CanPool -eq True)
+New-StoragePool -FriendlyName "PoolDeDisques" -StorageSubsystemFriendlyName *Hote-03* -PhysicalDisks (Get-PhysicalDisk | Where-Object CanPool -eq True)
 ```
 
 ### Faire le disque virtuel
 
 ```powershell
-New-VirtualDisk -StoragePoolFriendlyName "PoolMiroirTriple" -FriendlyName "DisqueVirtuel128TO" -Size 128TB -ProvisioningType Thin -ResiliencySettingName "Mirror" -NumberOfColumns 3
+New-VirtualDisk -StoragePoolFriendlyName "PoolDeDisques" -FriendlyName "DisqueVirtuel128TO" -Size 128TB -ProvisioningType Thin -ResiliencySettingName "Mirror" -NumberOfColumns 3
 $disk = Get-VirtualDisk -FriendlyName "DisqueVirtuel128TO" | Get-Disk
 Initialize-Disk -Number $disk.Number
 ```
@@ -275,7 +275,7 @@ Initialize-Disk -Number $disk.Number
 
 ```powershell
 New-Partition -DiskNumber $disk.Number -Size (64TB) -AssignDriveLetter
-Format-Volume -DriveLetter D -FileSystem NTFS -NewFileSystemLabel "Volume64TO"
+Format-Volume -DriveLetter D -FileSystem NTFS -NewFileSystemlabel "Volume64TO"
 ```
 
 ### Préparer la cible iSCSI
