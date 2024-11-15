@@ -150,6 +150,73 @@ Add-ADGroupMember -Identity "Communication" -Members "Faical"
 Add-ADGroupMember -Identity "Vendeur" -Members "Eliott"
 ```
 
+## => VM DC-02
+
+### Changement de réseau
+
+```powershell
+Rename-NetAdapter -Name Ethernet -NewName Interne
+New-NetIPAddress -InterfaceAlias Interne -IPAddress 10.144.0.2 -PrefixLength 24 -DefaultGateway 10.144.0.254
+Set-DnsClientServerAddress -InterfaceAlias Interne -ServerAddresses 10.144.0.1, 10.144.0.2
+Disable-NetAdapterBinding -Name Interne -ComponentID ms_tcpip6
+Rename-Computer -NewName "DC-02" -Restart
+```
+
+### Joindre le domaine
+
+```powershell
+Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+```
+
+### Installation de ADDS
+
+```powershell
+Install-ADDSDomainController -DomainName "form-it.lab"
+Add-DhcpServerv4Failover -ComputerName "DC-01" -PartnerServer "DC-02" -Name "Failover-Partner" -LoadBalancePercent 50 -SharedSecret "Azerty123"  -ScopeId 10.144.0.0
+```
+
+## => VM Hote-01
+
+```powershell
+Rename-NetAdapter -Name Ethernet -NewName Interne
+New-NetIPAddress -InterfaceAlias Interne -IPAddress 10.144.0.10 -PrefixLength 24 -DefaultGateway 10.144.0.254
+Set-DnsClientServerAddress -InterfaceAlias Interne -ServerAddresses 10.144.0.1, 10.144.0.2
+Disable-NetAdapterBinding -Name Interne -ComponentID ms_tcpip6
+Rename-Computer -NewName "Hote-01" -Restart
+```
+
+```powershell
+Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+```
+
+## => VM Hote-02
+
+```powershell
+Rename-NetAdapter -Name Ethernet -NewName Interne
+New-NetIPAddress -InterfaceAlias Interne -IPAddress 10.144.0.20 -PrefixLength 24 -DefaultGateway 10.144.0.254
+Set-DnsClientServerAddress -InterfaceAlias Interne -ServerAddresses 10.144.0.1, 10.144.0.2
+Disable-NetAdapterBinding -Name Interne -ComponentID ms_tcpip6
+Rename-Computer -NewName "Hote-02" -Restart
+```
+
+```powershell
+Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+```
+
+## => VM Hote-03
+
+```powershell
+Rename-NetAdapter -Name Ethernet -NewName Interne
+New-NetIPAddress -InterfaceAlias Interne -IPAddress 10.144.0.30 -PrefixLength 24 -DefaultGateway 10.144.0.254
+Set-DnsClientServerAddress -InterfaceAlias Interne -ServerAddresses 10.144.0.1, 10.144.0.2
+Disable-NetAdapterBinding -Name Interne -ComponentID ms_tcpip6
+Rename-Computer -NewName "Hote-03" -Restart
+```
+
+```powershell
+Add-Computer -DomainName "form-it.lab" -Credential "FORM-IT\Administrateur" -Restart
+```
+
 ## => PC Physique
 
 ### Créations de 9 disques 4To:
