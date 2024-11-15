@@ -23,7 +23,7 @@ New-VMSwitch -Name MPIO2 -SwitchType Private
 ```powershell
 New-VM -Name "Master" -MemoryStartupBytes 16GB -Generation 2 -Path "D:\Hyper-V\" -NewVHDPath "D:\Hyper-V\Master\Master.vhdx" -NewVHDSizeBytes 200GB -SwitchName Interne
 Set-VM -Name "Master" -ProcessorCount 8 -CheckpointType Disabled
-Enable-VMIntegrationService -VMName "Master" _interface_
+Enable-VMIntegrationService -VMName "Master" *interface*
 Add-VMDvdDrive -VMName "Master" -Path "D:\ISO\WindowsServer2022.iso"
 Set-VMFirmware -VMName "Master" -FirstBootDevice (Get-VMDvdDrive -VMName "Master")
 ```
@@ -67,7 +67,7 @@ Set-VM -Name "Hote-01", "Hote-02", "Hote-03", "DC-01", "DC-02" -ProcessorCount 4
 ### Activer les services invités
 
 ```powershell
-Enable-VMIntegrationService -VMName "Hote-01", "Hote-02", "Hote-03", "DC-01", "DC-02" _interface_
+Enable-VMIntegrationService -VMName "Hote-01", "Hote-02", "Hote-03", "DC-01", "DC-02" *interface*
 ```
 
 ## => VM DC-01
